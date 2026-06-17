@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UAIV DataHub</title>
+  <meta name="description" content="UAIV 数据基座总入口：数据集、标注平台、Foundry 与后续 Benchmark 的统一导航页。">
+  <meta property="og:title" content="UAIV DataHub">
+  <meta property="og:description" content="UAIV 低空多模态数据生态总入口，连接数据集、标注平台、Foundry 与未来 Benchmark。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jennyzhang0810.github.io/UAIV-DataHub/">
+  <style>
+    :root {
+      --ink: #18222c;
+      --muted: #5a6874;
+      --line: #d9e1e8;
+      --paper: #f6f8fb;
+      --white: #ffffff;
+      --blue: #315f8f;
+      --teal: #177c80;
+      --green: #2f6f4f;
+      --amber: #af7a12;
+      --red: #a53e35;
+      --shadow: 0 14px 36px rgba(18, 35, 49, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.6;
+      letter-spacing: 0;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 22px;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+    .brand-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: flex-end;
+      font-size: 14px;
+    }
+    nav a { color: var(--muted); }
+
+    .hero {
+      color: #fff;
+      background:
+        linear-gradient(rgba(14, 24, 32, 0.85), rgba(14, 24, 32, 0.70)),
+        radial-gradient(circle at 74% 20%, rgba(23, 124, 128, 0.55), transparent 34%),
+        linear-gradient(135deg, #183447, #243b54 48%, #173d4a);
+    }
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 82px 22px 88px;
+      min-height: calc(100vh - 60px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.88fr);
+      gap: 40px;
+      align-items: center;
+    }
+    h1 {
+      margin: 0 0 18px;
+      font-size: clamp(44px, 6vw, 80px);
+      line-height: 1.02;
+    }
+    .hero p {
+      margin: 0 0 24px;
+      max-width: 780px;
+      font-size: 18px;
+      color: rgba(255,255,255,0.88);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 10px 16px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.30);
+      color: #fff;
+      background: rgba(255,255,255,0.12);
+      font-size: 14px;
+      font-weight: 750;
+    }
+    .button.primary {
+      color: var(--ink);
+      background: #fff;
+      border-color: #fff;
+    }
+
+    .panel {
+      border: 1px solid rgba(255,255,255,0.26);
+      border-radius: 10px;
+      background: rgba(9, 18, 26, 0.46);
+      padding: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.20);
+    }
+    .status-row {
+      display: grid;
+      grid-template-columns: 34px minmax(0,1fr) auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 8px 10px;
+      margin: 8px 0;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.08);
+      font-size: 14px;
+    }
+    .status-index {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.18);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .status-tag {
+      color: rgba(255,255,255,0.75);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    main section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 56px 22px;
+    }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+    .section-copy {
+      max-width: 880px;
+      margin: 0 0 28px;
+      color: var(--muted);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .table th,
+    .table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    .table th {
+      background: #eef4f7;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .table tr:last-child td { border-bottom: 0; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+    .card p { margin: 0; color: var(--muted); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      margin: 8px 6px 0 0;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #e9f3f2;
+      color: #10686d;
+      font-size: 12px;
+      font-weight: 760;
+    }
+    .status-released { color: var(--green); font-weight: 850; }
+    .status-progress { color: var(--amber); font-weight: 850; }
+    .status-planned { color: var(--muted); font-weight: 850; }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 22px 40px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 940px) {
+      .topbar-inner { flex-direction: column; align-items: flex-start; padding: 12px 18px; }
+      nav { justify-content: flex-start; }
+      .hero-inner { grid-template-columns: 1fr; min-height: auto; padding-top: 54px; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>UAIV DataHub</div>
+      <nav aria-label="Primary">
+        <a href="#status">状态总览</a>
+        <a href="#assets">资产说明</a>
+        <a href="#relationship">关系图谱</a>
+        <a href="#roadmap">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <h1>UAIV DataHub</h1>
+        <p>UAIV 数据基座的统一入口页，用一个页面串起数据集、标注平台、Foundry 和未来 Benchmark。首屏先看状态总览，再看每个资产的定位、访问入口和后续计划。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#status">查看状态总览</a>
+          <a class="button" href="#assets">查看资产详情</a>
+          <a class="button" href="#roadmap">查看路线图</a>
+        </div>
+      </div>
+      <div class="panel" aria-label="UAIV data base current overview">
+        <div class="status-row"><span class="status-index">1</span><span>LAMD-DATASETS</span><span class="status-tag status-released">✅ Released</span></div>
+        <div class="status-row"><span class="status-index">2</span><span>UAIV-Real-CityGov-v1</span><span class="status-tag status-progress">🔄 In Progress</span></div>
+        <div class="status-row"><span class="status-index">3</span><span>UAIV-Labeler</span><span class="status-tag status-released">✅ Released</span></div>
+        <div class="status-row"><span class="status-index">4</span><span>UAIV-Foundry</span><span class="status-tag status-progress">🔄 In Progress</span></div>
+        <div class="status-row"><span class="status-index">5</span><span>UAIV-Real-Extreme-v1</span><span class="status-tag status-planned">📋 Planned</span></div>
+        <div class="status-row"><span class="status-index">6</span><span>UAIV-Real-CityQA-v1</span><span class="status-tag status-planned">📋 Planned</span></div>
+        <div class="status-row"><span class="status-index">7</span><span>UAIV-Benchmark</span><span class="status-tag status-planned">📋 Planned</span></div>
+        <div class="status-row"><span class="status-index">8</span><span>UAIV-QA-Benchmark</span><span class="status-tag status-planned">📋 Planned</span></div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section id="status">
+      <p class="eyebrow">Status Overview</p>
+      <h2 class="section-title">页面首屏状态总览表</h2>
+      <p class="section-copy">这是整个 UAIV 数据基座页面最重要的模块。它区分已发布、进行中和规划中三种状态，避免把“正在收尾”的内容误看成“正式发布”。</p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>资产名称</th>
+            <th>状态</th>
+            <th>类型</th>
+            <th>规模 / 说明</th>
+            <th>论文计划</th>
+            <th>访问链接</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>LAMD-DATASETS</strong></td>
+            <td class="status-released">✅ Released (10%公开)</td>
+            <td>多任务数据集</td>
+            <td>5 大任务板块：变化检测、生态、图像修复、行人重识别、城市场景</td>
+            <td>暂无，当前为数据集 demo 亮相</td>
+            <td><a href="https://jennyzhang0810.github.io/LowAltitude-Multimodal-Dataset/">Project</a> · <a href="https://github.com/JennyZhang0810/LowAltitude-Multimodal-Dataset">GitHub</a> · <a href="https://www.scidb.cn/detail?dataSetId=203705443be44f7882bb9ddfd7d401da">ScienceDB</a></td>
+          </tr>
+          <tr>
+            <td><strong>UAIV-Real-CityGov-v1</strong></td>
+            <td class="status-progress">🔄 收尾中，即将发布</td>
+            <td>城市治理多任务数据集</td>
+            <td>4,796 张图像，6 大任务模块：事件理解、目标检测、场景分类、城市功能识别、环境状态识别、OCR</td>
+            <td>Scientific Data 投稿中</td>
+            <td><a href="https://github.com/JennyZhang0810/UAIV-Real">GitHub</a></td>
+          </tr>
+          <tr>
+            <td><strong>UAIV-Labeler</strong></td>
+            <td class="status-released">✅ 已上线使用</td>
+            <td>低空原生半自动标注平台</td>
+            <td>支持检测 / 分割 / OCR / 事件 QA，集成 SAM / YOLO，飞行批次管理</td>
+            <td>计划投 ACMMM / AAAI Demo Track</td>
+            <td><a href="https://jennyzhang0810.github.io/UAIV-Labeler/">平台地址</a> · <a href="https://github.com/JennyZhang0810/UAIV-Labeler">GitHub</a> · <a href="http://8.137.184.86/">Demo</a></td>
+          </tr>
+          <tr>
+            <td><strong>UAIV-Foundry</strong></td>
+            <td class="status-progress">🔄 收尾中，即将上线</td>
+            <td>数据生产操作系统</td>
+            <td>Pipeline / QA / Dashboard / Benchmark Runner 自动化工具链</td>
+            <td>合并入数据集论文</td>
+            <td><a href="https://jennyzhang0810.github.io/UAIV-Foundry/">项目页</a> · <a href="https://github.com/JennyZhang0810/UAIV-Foundry">GitHub</a></td>
+          </tr>
+          <tr>
+            <td><strong>UAIV-Real-Extreme-v1</strong></td>
+            <td class="status-planned">📋 规划中</td>
+            <td>稀有事件数据集</td>
+            <td>燃烧、盗采、河道污染等低频高价值事件</td>
+            <td>Scientific Data</td>
+            <td>待发布</td>
+          </tr>
+          <tr>
+            <td><strong>UAIV-Real-CityQA-v1</strong></td>
+            <td class="status-planned">📋 规划中</td>
+            <td>QA 格式标注数据集</td>
+            <td>面向事件问答和视觉推理的低空 QA 数据</td>
+            <td>Scientific Data</td>
+            <td>待发布</td>
+          </tr>
+          <tr>
+            <td><strong>UAIV-Benchmark</strong></td>
+            <td class="status-planned">📋 规划中（明年）</td>
+            <td>全任务 AI-Ready 基准</td>
+            <td>全部 UAIV 任务整合为统一 AI-Ready 格式，含模型评测</td>
+            <td>CVPR / NeurIPS</td>
+            <td>待发布</td>
+          </tr>
+          <tr>
+            <td><strong>UAIV-QA-Benchmark</strong></td>
+            <td class="status-planned">📋 规划中</td>
+            <td>QA + 大模型评测基准</td>
+            <td>含大模型方法创新的 QA 评测</td>
+            <td>TPAMI</td>
+            <td>待发布</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="assets">
+      <p class="eyebrow">Assets</p>
+      <h2 class="section-title">各资产的定位</h2>
+      <div class="grid-2">
+        <article class="card">
+          <h3>LAMD-DATASETS</h3>
+          <p>UAIV 生态的首次公开亮相，展示数据集的多样性和任务覆盖面。当前只公开约 10%，用于社区预览数据结构、标注格式和任务类型。</p>
+          <span class="pill">变化检测</span>
+          <span class="pill">生态</span>
+          <span class="pill">图像修复</span>
+          <span class="pill">ReID</span>
+          <span class="pill">城市场景</span>
+        </article>
+        <article class="card">
+          <h3>UAIV-Real-CityGov-v1</h3>
+          <p>旗舰城市治理数据集，围绕 4,796 张低空图像，覆盖事件理解、目标检测、场景识别、城市功能、环境状态和 OCR 六大任务模块。</p>
+          <span class="pill">Scientific Data</span>
+          <span class="pill">4,796 images</span>
+          <span class="pill">6 tasks</span>
+        </article>
+        <article class="card">
+          <h3>UAIV-Labeler</h3>
+          <p>低空原生半自动标注平台，强调飞行批次管理、多任务联合标注、模型辅助和 AI-Ready 导出。</p>
+          <span class="pill">Detection</span>
+          <span class="pill">Segmentation</span>
+          <span class="pill">OCR</span>
+          <span class="pill">Event QA</span>
+        </article>
+        <article class="card">
+          <h3>UAIV-Foundry</h3>
+          <p>低空数据生产操作系统，让数据构建可复现、可审计。包含 Pipeline、QA Runner、Dashboard、Dataset Card Generator 和 Benchmark Runner。</p>
+          <span class="pill">Pipeline</span>
+          <span class="pill">QA</span>
+          <span class="pill">Dashboard</span>
+          <span class="pill">Benchmark</span>
+        </article>
+      </div>
+    </section>
+
+    <section id="relationship">
+      <p class="eyebrow">Relationship</p>
+      <h2 class="section-title">三层关系</h2>
+      <p class="section-copy">UAIV 数据基座的逻辑不是“把一堆链接放在一起”，而是把数据集、标注平台和 Foundry 组织成一个可持续更新的生产系统。</p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>层级</th>
+            <th>角色</th>
+            <th>作用</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Data Product</td>
+            <td>UAIV-Real / LAMD-DATASETS</td>
+            <td>对外发布的数据资产和 benchmark 入口</td>
+          </tr>
+          <tr>
+            <td>Human Workbench</td>
+            <td>UAIV-Labeler</td>
+            <td>人工标注、复核和 AI 辅助标注的生产台</td>
+          </tr>
+          <tr>
+            <td>Data OS</td>
+            <td>UAIV-Foundry</td>
+            <td>把导入、标注、QA、发布和评测连接成闭环</td>
+          </tr>
+          <tr>
+            <td>Future Evaluation Layer</td>
+            <td>UAIV-Benchmark / UAIV-QA-Benchmark</td>
+            <td>将来统一评测与方法比较的标准化基准层</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="roadmap">
+      <p class="eyebrow">Roadmap</p>
+      <h2 class="section-title">后续路线图</h2>
+      <div class="grid-2">
+        <article class="card">
+          <h3>短期</h3>
+          <p>继续收尾 UAIV-Real-CityGov-v1 的标注和 QA；同步让 UAIV-Foundry 收敛成稳定可展示的发布形态。</p>
+        </article>
+        <article class="card">
+          <h3>中期</h3>
+          <p>把 UAIV-Benchmark 和 UAIV-QA-Benchmark 作为未来统一评测层，逐步补齐 AI-Ready 数据格式与 baseline 协议。</p>
+        </article>
+        <article class="card">
+          <h3>长期</h3>
+          <p>把 UAIV 数据基座做成持续更新的公开入口，让数据集、标注平台和 Foundry 都可以被外部直接访问和引用。</p>
+        </article>
+        <article class="card">
+          <h3>访问策略</h3>
+          <p>已发布资产直接跳转，收尾中资产保留预览或源码入口，规划中资产仅展示状态与后续方向。</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    UAIV DataHub · updated 2026-06-17
+  </footer>
+</body>
+</html>
